@@ -1,0 +1,26 @@
+{
+  "name": "consorcios",
+  "version": "1.0.0",
+  "description": "",
+  "main": "App.js",
+  "scripts": {
+    "start": "nodemon",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@adminjs/express": "^4.0.1",
+    "@adminjs/mongoose": "^2.0.0",
+    "adminjs": "^5.3.3",
+    "axios": "^0.24.0",
+    "bcrypt": "^5.0.1",
+    "body-parser": "^1.19.1",
+    "cors": "^2.8.5",
+    "express": "^4.17.2",
+    "express-formidable": "^1.2.0",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.15"
+  }
+}
