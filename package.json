@@ -20,7 +20,10 @@
     "cors": "^2.8.5",
     "express": "^4.17.2",
     "express-formidable": "^1.2.0",
+    "html-pdf": "^3.0.1",
     "morgan": "^1.10.0",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "puppeteer": "^13.0.1",
+    "react-json-pretty": "^2.2.0"
   }
 }

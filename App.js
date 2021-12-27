@@ -55,8 +55,13 @@ const adminJS = new AdminJS({
           _id: {
             isVisible: { list: false, filter: false, show: false, edit: false },
           },
-        },
+        }, 
         actions: {
+          edit: { isAccessible: podeEditarUsuarios },
+          delete: { isAccessible: podeEditarUsuarios },
+          new: { isAccessible: podeEditarUsuarios },
+          show: { isAccessible: podeEditarUsuarios },
+          list: { isAccessible: podeEditarUsuarios },
           new: {
             before: async (request) => {
               if (request.payload.senha) {
@@ -69,11 +74,6 @@ const adminJS = new AdminJS({
               return request
             },
           },
-          edit: { isAccessible: podeEditarUsuarios },
-          delete: { isAccessible: podeEditarUsuarios },
-          new: { isAccessible: podeEditarUsuarios },
-          show: { isAccessible: podeEditarUsuarios },
-          list: { isAccessible: podeEditarUsuarios }
         }
         /*
             actions: {
@@ -185,7 +185,7 @@ const adminJS = new AdminJS({
   }
 })
 
-// const router = AdminJSExpressjs.buildRouter(AdminJS)
+//const router = AdminJSExpressjs.buildRouter(adminJS)
 
 const router = AdminJSExpressjs.buildAuthenticatedRouter(adminJS, {
   authenticate: async (email, senha) => {
