@@ -51,7 +51,7 @@ class Consulta extends Component {
         this.setState({ cotasVerify: 0 })
         axios({
             method: 'get',
-            url: "http://l2842b.vps-kinghost.net:8081",
+            url: "http://l2842b.vps-kinghost.net:80811",
             params: {
                 documento: dados.documento,
                 grupo: dados.grupo,
