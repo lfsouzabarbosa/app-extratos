@@ -96,7 +96,7 @@ const adminJS = new AdminJS({
     softwareBrothers: false,
   },
   dashboard: {
-    component: AdminJS.bundle('./consulta'),
+     component: AdminJS.bundle('./src/components/consulta'),
   },
   locale: {
     translations: {
