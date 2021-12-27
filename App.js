@@ -219,9 +219,9 @@ apiCotas.use(express.json())
 apiCotas.use(cors())
 
 
-app.listen(80800, () => console.log('Sistema rodando localhost:21257/admin'))
-apiTK.listen(80811, () => console.log('API pega token rodando localhost:8081'))
-apiExport.listen(80822, () => console.log('API exporta token rodando localhost:8082'))
+app.listen(6060, () => console.log('Sistema rodando localhost:21257/admin'))
+apiTK.listen(6061, () => console.log('API pega token rodando localhost:8081'))
+apiExport.listen(6062, () => console.log('API exporta token rodando localhost:8082'))
 
 
 apiTK.get('/', (req, res) => { 
