@@ -96,7 +96,7 @@ const adminJS = new AdminJS({
     softwareBrothers: false,
   },
   dashboard: {
-    component: AdminJS.bundle('./src/components/consulta'),
+    component: AdminJS.bundle('./consulta'),
   },
   locale: {
     translations: {
@@ -219,9 +219,9 @@ apiCotas.use(express.json())
 apiCotas.use(cors())
 
 
-app.listen(21257, () => console.log('Sistema rodando localhost:21257/admin'))
-apiTK.listen(8081, () => console.log('API pega token rodando localhost:8081'))
-apiExport.listen(8082, () => console.log('API exporta token rodando localhost:8082'))
+app.listen(80800, () => console.log('Sistema rodando localhost:21257/admin'))
+apiTK.listen(80811, () => console.log('API pega token rodando localhost:8081'))
+apiExport.listen(80822, () => console.log('API exporta token rodando localhost:8082'))
 
 
 apiTK.get('/', (req, res) => { 
