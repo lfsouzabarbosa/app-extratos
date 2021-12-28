@@ -238,7 +238,6 @@ apiTK.get('/', (req, res) => {
       headless: false,
       chromeOptions: {
             args: ['--disable-setuid-sandbox', '--no-sandbox']
-      }
       }        
       });
       const page = await browser.newPage();
