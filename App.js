@@ -240,10 +240,10 @@ apiTK.get('/', (req, res) => {
       })
       const page = await browser.newPage();
       await page.goto('https://canalconsorciado.bradesco.com.br/valor-receber');
-      await page.waitForSelector('input[name=grupo]', grupo, { delay: 100 }); // '4830'
-      await page.waitForSelector('input[name=cota]', cota, { delay: 100 }); // '23'
-      await page.waitForSelector('input[name=inscricaoNacional]', documento, { delay: 100 }); // '51941163653'
-      await page.waitForSelector('input[name=numeroContrato]', contrato, { delay: 100 }); // '109242563'
+      await page.waitFor('input[name=grupo]', grupo, { delay: 100 }); // '4830'
+      await page.waitFor('input[name=cota]', cota, { delay: 100 }); // '23'
+      await page.waitFor('input[name=inscricaoNacional]', documento, { delay: 100 }); // '51941163653'
+      await page.waitFor('input[name=numeroContrato]', contrato, { delay: 100 }); // '109242563'
       await page.click('button[type="submit"]');
 
       page.on('request', async (request) => {
