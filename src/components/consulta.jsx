@@ -1,31 +1,3 @@
-Skip to content
-Search or jump to…
-Pull requests
-Issues
-Marketplace
-Explore
- 
-@lfsouzabarbosa 
-lfsouzabarbosa
-/
-app-extratos
-Private
-Code
-Issues
-Pull requests
-Actions
-Projects
-Security
-Insights
-Settings
-app-extratos/consulta.jsx /
-@lfsouzabarbosa
-lfsouzabarbosa Update consulta.jsx
-Latest commit 041fdaf 18 hours ago
- History
- 1 contributor
-424 lines (403 sloc)  19.6 KB
-   
 import React, { Component } from 'react';
 import {
     Input,
@@ -79,7 +51,7 @@ class Consulta extends Component {
         this.setState({ cotasVerify: 0 })
         axios({
             method: 'get',
-            url: "http://l2842b.vps-kinghost.net:6061",
+            url: "http://l2842b.vps-kinghost.net:8081",
             params: {
                 documento: dados.documento,
                 grupo: dados.grupo,
