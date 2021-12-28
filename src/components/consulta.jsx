@@ -26,7 +26,6 @@ class Consulta extends Component {
             cotaCompleta: '',
             cotaEndereco: '',
             cotaTelefone: '',
-            cotaEmail: '',
             cotasVerify: '',
             encerramento: '',
             adesao: '',
@@ -153,17 +152,6 @@ class Consulta extends Component {
         axios({
             method: 'get',
             headers: { 'Authorization': 'Bearer ' + token },
-            url: "https://canalconsorciado.bradesco.com.br/GatewayAutoAtendimento/autoatendimento/v1/cotas/" + idCota + "/dados-cadastrais/emails/0/CO"
-        })
-            .then(response => {
-                console.log(response.data)
-                const resposta = response.data
-                this.setState({ cotaEmail: resposta[0] });
-
-            });
-        axios({
-            method: 'get',
-            headers: { 'Authorization': 'Bearer ' + token },
             url: "https://canalconsorciado.bradesco.com.br/GatewayAutoAtendimento/autoatendimento/v1/cotas/" + idCota + "/dados-cadastrais/telefones/0/CO"
         })
             .then(response => {
@@ -264,7 +252,6 @@ class Consulta extends Component {
         const { cotaCompleta } = this.state;
         const { cotaEndereco } = this.state;
         const { cotaTelefone } = this.state;
-        const { cotaEmail } = this.state;
         const { encerramento } = this.state;
         const { adesao } = this.state;
         const CotasJSON = JSON.stringify(cotaCompleta);
@@ -385,14 +372,6 @@ class Consulta extends Component {
                                 <TableCell>
                                     <Text fontWeight="bold">Telefone</Text>
                                     <Text fontSize="h7">{cotaTelefone.telefone}</Text>
-                                </TableCell>
-                            </TableBody>
-                        </Table>
-                        <Table>
-                            <TableBody>
-                                <TableCell>
-                                    <Text fontWeight="bold">E-mail</Text>
-                                    <Text fontSize="h7">{cotaEmail}</Text>
                                 </TableCell>
                             </TableBody>
                         </Table>
