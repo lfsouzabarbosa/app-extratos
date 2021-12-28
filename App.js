@@ -234,7 +234,10 @@ apiTK.get('/', (req, res) => {
   let chave; 
   const puppeteer = require('puppeteer');
   (async () => {
-      const browser = await puppeteer.launch({ignoreDefaultArgs: ['--disable-extensions']});
+      const browser = await puppetteer.launch({
+         headless: true,
+         args: ['--no-sandbox']
+      })
       const page = await browser.newPage();
       await page.goto('https://canalconsorciado.bradesco.com.br/valor-receber');
       await page.type('input[name=grupo]', grupo, { delay: 100 }); // '4830'
