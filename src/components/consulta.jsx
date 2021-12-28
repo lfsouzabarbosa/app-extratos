@@ -7,7 +7,8 @@ import {
     Table,
     TableRow,
     TableCell,
-    TableBody
+    TableBody,
+    Loader
 } from '@adminjs/design-system';
 import axios from "axios";
 import JSONPretty from 'react-json-pretty';
@@ -32,7 +33,8 @@ class Consulta extends Component {
             contemplacao: '',
             token: '',
             idCota: '',
-            tokenExtratoImprimir: ''
+            tokenExtratoImprimir: '',
+            loader: ''
         }
         this.salvar = this.salvar.bind(this);
         this.bucarCotaPorID = this.bucarCotaPorID.bind(this)
@@ -40,7 +42,7 @@ class Consulta extends Component {
     }
 
     async salvar() {
-
+        this.setState({ loader: 1 })
         let dados = new Object();
         dados.documento = this.state.documento
         dados.grupo = this.state.grupo
@@ -62,6 +64,7 @@ class Consulta extends Component {
                 console.log(response.data)
                 const token = response.data
                 this.setState({ token: token })
+                this.setState({ loader: 0 })
                 axios({
                     method: 'get',
                     headers: { 'Authorization': 'Bearer ' + token },
@@ -190,6 +193,14 @@ class Consulta extends Component {
             });
     }
     render() {
+        const { loader } = this.state
+        while ( loader == 1 ){
+            return (
+                <div>
+                    <Loader/>
+                </div>
+            );
+        }
         const cotasVazias = this.state.cotasVerify
         while (cotasVazias == 0) {
             return (
