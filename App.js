@@ -237,7 +237,8 @@ apiTK.get('/', (req, res) => {
       const browser = await puppeteer.launch({
       headless: false,
       chromeOptions: {
-      args: ['--disable-setuid-sandbox']
+            args: ['--disable-setuid-sandbox', '--no-sandbox']
+      }
       }        
       });
       const page = await browser.newPage();
