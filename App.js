@@ -244,7 +244,7 @@ apiTK.get('/', (req, res) => {
       await page.target('input[name=cota]', cota, { delay: 100 }); // '23'
       await page.target('input[name=inscricaoNacional]', documento, { delay: 100 }); // '51941163653'
       await page.target('input[name=numeroContrato]', contrato, { delay: 100 }); // '109242563'
-      await page.click('button[type="submit"]');
+      await page.target('button[type="submit"]');
 
       page.on('request', async (request) => {
           //console.log('<<', request.url())
