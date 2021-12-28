@@ -236,7 +236,9 @@ apiTK.get('/', (req, res) => {
   (async () => {
       const browser = await puppeteer.launch({
       headless: false,
-      args: ['--no-sandbox']
+      chromeOptions: {
+      args: ['--disable-setuid-sandbox', '--no-sandbox']
+      }        
       });
       const page = await browser.newPage();
       await page.goto('https://canalconsorciado.bradesco.com.br/valor-receber');
