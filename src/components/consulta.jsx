@@ -1,27 +1,45 @@
+Skip to content
+Search or jump to…
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@lfsouzabarbosa 
+lfsouzabarbosa
+/
+app-extratos
+Private
+Code
+Issues
+Pull requests
+Actions
+Projects
+Security
+Insights
+Settings
+app-extratos/consulta.jsx /
+@lfsouzabarbosa
+lfsouzabarbosa Update consulta.jsx
+Latest commit 041fdaf 18 hours ago
+ History
+ 1 contributor
+424 lines (403 sloc)  19.6 KB
+   
 import React, { Component } from 'react';
-import { Input, Box, Button, Text } from '@adminjs/design-system';
-import styled from 'styled-components';
+import {
+    Input,
+    Box,
+    Button,
+    Text,
+    Table,
+    TableRow,
+    TableCell,
+    TableBody
+} from '@adminjs/design-system';
 import axios from "axios";
 import JSONPretty from 'react-json-pretty';
 
-const Botao = styled(Button)`
-background: white;
-color: #4268F6;
-
-&:hover {
-    background: #4268F6;
-    color: white;
-    border: 2px solid #4268F6;
-};
-
-align: center;
-min-width: 60%;
-fontSize: 1em;
-margin-bottom: 1em;
-padding: 1em 2em;
-border: 2px solid #4268F6;
-border-radius: 3px;
-`;
 
 class Consulta extends Component {
     constructor(props) {
@@ -34,10 +52,20 @@ class Consulta extends Component {
             cotasResposta1: '',
             cotasResposta2: '',
             cotaCompleta: '',
+            cotaEndereco: '',
+            cotaTelefone: '',
+            cotaEmail: '',
             cotasVerify: '',
-            token: ''
+            encerramento: '',
+            adesao: '',
+            contemplacao: '',
+            token: '',
+            idCota: '',
+            tokenExtratoImprimir: ''
         }
         this.salvar = this.salvar.bind(this);
+        this.bucarCotaPorID = this.bucarCotaPorID.bind(this)
+        this.imprimirExtrato = this.imprimirExtrato.bind(this)
     }
 
     async salvar() {
@@ -51,7 +79,7 @@ class Consulta extends Component {
         this.setState({ cotasVerify: 0 })
         axios({
             method: 'get',
-            url: "http://l2842b.vps-kinghost.net:8081",
+            url: "http://l2842b.vps-kinghost.net:6061",
             params: {
                 documento: dados.documento,
                 grupo: dados.grupo,
@@ -67,25 +95,11 @@ class Consulta extends Component {
                     method: 'get',
                     headers: { 'Authorization': 'Bearer ' + token },
                     url: "https://canalconsorciado.bradesco.com.br/GatewayAutoAtendimento/autoatendimento/v1/cotas"
-                    //url: "https://canalconsorciado.bradesco.com.br/GatewayAutoAtendimento/autoatendimento/v1/cotas/512685/dashboard/consorciado" api pega informações da cota
                 })
                     .then(response => {
-                        this.setState({ cotasVerify: 1 })    
-                    })
-                /*
-
-                                            this.setState({ cotasVerify: 1 })
+                        this.setState({ cotasVerify: 1 })
                         let resposta = response.data
                         let CotasJSON = JSON.stringify(resposta, (key, value) => {
-                            if (key == "situacao") {
-                                return undefined;
-                            }
-                            if (key == "cota") {
-                                return undefined;
-                            }
-                            if (key == "grupo") {
-                                return undefined;
-                            }
                             if (key == "versao") {
                                 return undefined;
                             }
@@ -110,192 +124,325 @@ class Consulta extends Component {
                             if (key == "idempresa") {
                                 return undefined;
                             }
-               
+
+
                             return value;
                         })
                         console.log(CotasJSON);
-                        const cotasObj = JSON.parse(CotasJSON)
-                        console.log(cotasObj);
-                        console.log(cotasObj["idCota"])
+                        const cotasJSONparse = JSON.parse(CotasJSON)
+                        this.setState({ cotasResposta1: cotasJSONparse[0].grupos });
+                        this.setState({ cotasResposta2: cotasJSONparse[1].grupos });
+                    })
+                    .catch(function (error) {
+                        alert('Erro: ' + error + ' Não foi possível localizar os dados do consórcio.. Por favor, veririfique os dados e tente novamente!');
+                    });
 
+            })
+    };
 
-                                     if (key == "idCota") {
+    bucarCotaPorID() {
+        const { idCota } = this.state
+        const { token } = this.state
+        console.log(idCota, ' Token >> ', token)
+        axios({
+            method: 'get',
+            headers: { 'Authorization': 'Bearer ' + token },
+            url: "https://canalconsorciado.bradesco.com.br/GatewayAutoAtendimento/autoatendimento/v1/cotas/" + idCota + "/dashboard/consorciado"
+        })
+            .then(response => {
+                console.log(response.data)
+                const resposta = response.data
+                this.setState({ cotaCompleta: resposta });
+                const encerramento = resposta.dataEncerramento
+                let diaEncerramento = encerramento.substring(8, 10);
+                let mesEncerramento = encerramento.substring(5, 7);
+                let anoEncerramento = encerramento.substring(0, 4);
+                const dataEncerramento = diaEncerramento + '/' + mesEncerramento + '/' + anoEncerramento;
+                this.setState({ encerramento: dataEncerramento });
 
-                                axios({
-                                    method: 'get',
-                                    headers: { 'Authorization': 'Bearer ' + token },
-                                    url: "https://canalconsorciado.bradesco.com.br/GatewayAutoAtendimento/autoatendimento/v1/cotas/" + value + "/dashboard/consorciado"
-                                })
-                                    .then(response => {
-                                        console.log(response.data)
-                                        this.setState({ cotasVerify: 1 })
-                                        let jsoncot = JSON.stringify(response.data)
-                                        let obj = JSON.parse(jsoncot);
-                                        let nome = obj['cota']
-                                        console.log(nome)
-                                        this.setState({ cotaCompleta: nome });
-                                    });
-                            }
+                const adesao = resposta.dataAdesao
+                let diaAdesao = adesao.substring(8, 10);
+                let mesAdesao = adesao.substring(5, 7);
+                let anoAdesao = adesao.substring(0, 4);
+                const dataAdesao = diaAdesao + '/' + mesAdesao + '/' + anoAdesao;
+                this.setState({ adesao: dataAdesao });
+            });
+        axios({
+            method: 'get',
+            headers: { 'Authorization': 'Bearer ' + token },
+            url: "https://canalconsorciado.bradesco.com.br/GatewayAutoAtendimento/autoatendimento/v1/cotas/" + idCota + "/dados-cadastrais/enderecos/0/CO"
+        })
+            .then(response => {
+                console.log(response.data)
+                const resposta = response.data
+                this.setState({ cotaEndereco: resposta[0] });
 
+            });
+        axios({
+            method: 'get',
+            headers: { 'Authorization': 'Bearer ' + token },
+            url: "https://canalconsorciado.bradesco.com.br/GatewayAutoAtendimento/autoatendimento/v1/cotas/" + idCota + "/dados-cadastrais/emails/0/CO"
+        })
+            .then(response => {
+                console.log(response.data)
+                const resposta = response.data
+                this.setState({ cotaEmail: resposta[0] });
 
+            });
+        axios({
+            method: 'get',
+            headers: { 'Authorization': 'Bearer ' + token },
+            url: "https://canalconsorciado.bradesco.com.br/GatewayAutoAtendimento/autoatendimento/v1/cotas/" + idCota + "/dados-cadastrais/telefones/0/CO"
+        })
+            .then(response => {
+                console.log(response.data)
+                const resposta = response.data
+                this.setState({ cotaTelefone: resposta[0] });
 
-                
-                                 let cotas = JSON.stringify(response.data, (key, value) => {
-                            if (key == "idCota") {
-
-                                axios({
-                                    method: 'get',
-                                    headers: { 'Authorization': 'Bearer ' + token },
-                                    url: "https://canalconsorciado.bradesco.com.br/GatewayAutoAtendimento/autoatendimento/v1/cotas/" + value + "/dashboard/consorciado"
-                                })
-                                    .then(response => {
-                                        console.log(response.data)
-                                        this.setState({ cotasVerify: 1 })
-                                        let jsoncot = JSON.stringify(response.data)
-                                        let obj = JSON.parse(jsoncot);
-                                        let nome = obj['cota'] 
-                                        console.log(nome)
-                                        this.setState({ cotasResposta: nome });
-                                    });
-                            }
-
-                            return value
-                        }
-
-
-                           axios({
-                                            method: 'get',
-                                            headers: { 'Authorization': 'Bearer ' + token },
-                                            url: "https://canalconsorciado.bradesco.com.br/GatewayAutoAtendimento/autoatendimento/v1/cotas/" + value + "/dashboard/consorciado"
-                                        })
-                                            .then(response => {
-                                                console.log(response.data)
-                                                this.setState({ cotasVerify: 1 })                   
-                                                //this.setState({ cotasResposta: response.data });
-                                            });
-                
-                
-                this.setState({ cotasVerify: 1 })
-                this.setState({ token: token })
+            });
+    }
+    imprimirExtrato() {
+        const { idCota } = this.state;
+        const { token } = this.state;
+        axios({
+            method: 'get',
+            headers: { 'Authorization': 'Bearer ' + token },
+            url: "https://canalconsorciado.bradesco.com.br/GatewayAutoAtendimento/autoatendimento/v1/cotas/" + idCota + "/extrato/imprimir"
+        })
+            .then(response => {
+                console.log(response.data)
+                const resposta = response.data
+                this.setState({ tokenExtratoImprimir: resposta });
                 axios({
                     method: 'get',
-                    headers: { 'Authorization': 'Bearer ' + token },
-                    url: "https://canalconsorciado.bradesco.com.br/GatewayAutoAtendimento/autoatendimento/v1/cotas"
-                    //url: "https://canalconsorciado.bradesco.com.br/GatewayAutoAtendimento/autoatendimento/v1/cotas/512685/dashboard/consorciado" api pega informações da cota
+                    responseType: 'arraybuffer',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    },
+                    url: "https://canalconsorciado.bradesco.com.br/GatewayAutoAtendimento/autoatendimento/v1/relatorios/" + resposta
                 })
-                    .then(response => {
-        
-                        console.log(response.data);
-                        let cotas = response.data;
-        
-        
-                        function replacer(key, value) {
-                            if (key == "idCota") {
-                                axios({
-                                    method: 'get',
-                                    headers: { 'Authorization': 'Bearer ' + token },
-                                    url: "https://canalconsorciado.bradesco.com.br/GatewayAutoAtendimento/autoatendimento/v1/cotas/" + value + "/dashboard/consorciado"
-                                })
-                                    .then(response => {
-                                        console.log(response.data)
-                                    });
-                            }
-        
-                            return value;
-                        }
-        
-                        let jsonCotas = JSON.stringify(cotas, replacer);
-        
-                        let objeto = jsonCotas;
-                        objeto = { ...objeto, cotas: jsonCotas }
-                        this.setState({ cotasResposta: objeto.cotas });
-                    })*/
-            })
-            .catch(function (error) {
-                alert('Erro: ' + error + ' Não foi possível localizar os dados do consórcio.. Por favor, veririfique os dados e tente novamente!');
+                    .then((response) => {
+                        console.log(response)
+                        let blob = new Blob([response.data], { type: 'application/pdf' }),
+                            url = window.URL.createObjectURL(blob)
+                        window.open(url);
+                    });
             });
-    };
+    }
     render() {
         const cotasVazias = this.state.cotasVerify
         while (cotasVazias == 0) {
             return (
-
-                <><Box flex flexDirection="column" variant="grey" animate="true">
-                    <div>
-                        <Box flex flexDirection="column" variant="white">
-                            <Box borderRadius="7px" minWidth="80%" marginX="2%" marginBottom="6%" justifyContent="column" marginTop="2%">
-                                <Text fontSize="h4" fontWeight="3px">Documento</Text>
-                                <Input id="documento"
-                                    onChange={(e) => {
-                                        let valorDigitado = e.target.value;
-                                        this.setState({ documento: valorDigitado });
-                                    }}
-                                />
-                            </Box>
-                            <Box borderRadius="7px" minWidth="80%" marginX="2%" marginBottom="6%" justifyContent="column" marginTop="-4%">
-                                <Text fontSize="h4" fontWeight="3px">Grupo</Text>
-                                <Input id="grupo"
-                                    onChange={(e) => {
-                                        let valorDigitado = e.target.value;
-                                        this.setState({ grupo: valorDigitado });
-                                    }}
-                                />
-                            </Box>
-                            <Box borderRadius="7px" minWidth="80%" marginX="2%" marginBottom="6%" justifyContent="column" marginTop="-4%">
-                                <Text fontSize="h4" fontWeight="3px">Cota</Text>
-                                <Input id="cota"
-                                    onChange={(e) => {
-                                        let valorDigitado = e.target.value;
-                                        this.setState({ cota: valorDigitado });
-                                    }}
-                                />
-                            </Box>
-                            <Box borderRadius="7px" minWidth="80%" marginX="2%" marginBottom="6%" justifyContent="column" marginTop="-4%">
-                                <Text fontSize="h4" fontWeight="3px">Contrato</Text>
-                                <Input id="contrato"
-                                    onChange={(e) => {
-                                        let valorDigitado = e.target.value;
-                                        this.setState({ contrato: valorDigitado });
-                                    }}
-                                />
-                            </Box>
-                            <Box borderRadius="7px" minWidth="80%" marginX="2%" marginBottom="6%" justifyContent="column" marginTop="-4%">
-                                <Botao alignSelf="center" onClick={this.salvar}>
-                                    <Text fontSize="h4" fontWeight="3px"><strong>Consultar</strong></Text>
-                                </Botao>
-                            </Box>
-
-                        </Box>
-                    </div>
-                </Box></>
-
+                <Box display={["block", "flex"]} flexDirection="row" justifyContent="space-between" margin="2%">
+                    <Box flex flexDirection="row" variant="white">
+                        <Table>
+                            <TableBody>
+                                <TableCell>
+                                    <Text fontSize="h5" fontWeight="2px">Documento</Text>
+                                    <Input id="documento"
+                                        onChange={(e) => {
+                                            let valorDigitado = e.target.value;
+                                            this.setState({ documento: valorDigitado });
+                                        }}
+                                    />
+                                </TableCell>
+                                <TableCell>
+                                    <Text fontSize="h5" fontWeight="2px">Grupo</Text>
+                                    <Input id="grupo"
+                                        onChange={(e) => {
+                                            let valorDigitado = e.target.value;
+                                            this.setState({ grupo: valorDigitado });
+                                        }}
+                                    />
+                                </TableCell>
+                                <TableCell>
+                                    <Text fontSize="h5" fontWeight="2px">Cota</Text>
+                                    <Input id="cota"
+                                        onChange={(e) => {
+                                            let valorDigitado = e.target.value;
+                                            this.setState({ cota: valorDigitado });
+                                        }}
+                                    />
+                                </TableCell>
+                                <TableCell>
+                                    <Text fontSize="h5" fontWeight="2px">Contrato</Text>
+                                    <Input id="contrato"
+                                        onChange={(e) => {
+                                            let valorDigitado = e.target.value;
+                                            this.setState({ contrato: valorDigitado });
+                                        }}
+                                    />
+                                </TableCell>
+                                <TableCell>
+                                    <Text fontSize="h5" fontWeight="2px">Consultar</Text>
+                                    <Button alignSelf="center" onClick={this.salvar}>
+                                        <Text fontSize="h5" fontWeight="2px"><strong>...</strong></Text>
+                                    </Button>
+                                </TableCell>
+                            </TableBody>
+                        </Table>
+                    </Box>
+                </Box>
             )
         }
+
         const cotas = this.state.cotasVerify;
-        /*
-                const token = this.state.token;
-                axios({
-                    method: 'get',
-                    headers: { 'Authorization': 'Bearer ' + token },
-                    url: "https://canalconsorciado.bradesco.com.br/GatewayAutoAtendimento/autoatendimento/v1/cotas/" + value + "/dashboard/consorciado"
-                })
-                .then(response => {
-                        const ids = response.data
-                        console.log(response.data)
-                        console.log('ids >>>> ', ids);
-                        this.setState({ linhasCotas: ids })
-                });
-        */
-        const { token } = this.state;
+        const { cotasResposta1 } = this.state;
+        const { cotasResposta2 } = this.state;
+        const { cotaCompleta } = this.state;
+        const { cotaEndereco } = this.state;
+        const { cotaTelefone } = this.state;
+        const { cotaEmail } = this.state;
+        const { encerramento } = this.state;
+        const { adesao } = this.state;
+        const CotasJSON = JSON.stringify(cotaCompleta);
+        const cotaUnica = JSON.parse(CotasJSON);
+        const enderecoPrincipalJSON = JSON.stringify(cotaEndereco);
+        const enderecoPrincipal = JSON.parse(enderecoPrincipalJSON);
+
+
+
 
         if (cotas == 1) {
+
             return (
-                <Box align-items="center" variant="grey" animate="true" >
-                    <div>
-                        <h5>Token Bradesco</h5>
-                        <br></br>                
-                        <h2>{token}</h2>
-                    </div>
+                <Box align-items="left" variant="grey" animate="true" >
+                    <Box display={["block", "flex"]} flexDirection="row">
+                        <Box flex flexDirection="row" variant="white">
+                            <Table>
+                                <TableBody>
+                                    <TableCell>
+                                        <Text fontSize="h5" fontWeight="6px">Buscar cota específica por ID</Text>
+                                        <Input id="cota"
+                                            onChange={(e) => {
+                                                let valorDigitado = e.target.value;
+                                                this.setState({ idCota: valorDigitado });
+                                            }}
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Text fontSize="h5" fontWeight="2px">Consultar</Text>
+                                        <Button alignSelf="right" onClick={this.bucarCotaPorID}>
+                                            <Text fontSize="h5" fontWeight="2px"><strong>...</strong></Text>
+                                        </Button>
+                                    </TableCell>
+                                </TableBody>
+                            </Table>
+                        </Box>
+                    </Box>
+                    <Box variant="white">
+                        <Table>
+                            <TableBody>
+                                <TableCell>
+                                    <Text fontWeight="bold">Nome</Text>
+                                    <Text fontSize="h7">{cotaUnica.nome}</Text>
+                                </TableCell>
+                                <TableCell>
+                                    <Text fontWeight="bold">Grupo</Text>
+                                    <Text fontSize="h7">{cotaUnica.grupo}</Text>
+                                </TableCell>
+                                <TableCell>
+                                    <Text fontWeight="bold">Cota</Text>
+                                    <Text fontSize="h7">{cotaUnica.cota}</Text>
+                                </TableCell>
+                                <TableCell>
+                                    <Text fontWeight="bold">Bem</Text>
+                                    <Text fontSize="h7">{cotaUnica.bem}</Text>
+                                </TableCell>
+                                <TableCell>
+                                    <Text fontWeight="bold">Adesão</Text>
+                                    <Text fontSize="h7">{adesao}</Text>
+                                </TableCell>
+                                <TableCell>
+                                    <Text fontWeight="bold">Encerramento</Text>
+                                    <Text fontSize="h7">{encerramento}</Text>
+                                </TableCell>
+                                <TableCell>
+                                    <Text fontWeight="bold">Valor bem</Text>
+                                    <Text fontSize="h7">{cotaUnica.valorBem}</Text>
+                                </TableCell>
+                                <TableCell>
+                                    <Text fontWeight="bold">Pago</Text>
+                                    <Text fontSize="h7">{cotaUnica.valorPago}</Text>
+                                </TableCell>
+                                <TableCell>
+                                    <Text fontWeight="bold">Devedor</Text>
+                                    <Text fontSize="h7">{cotaUnica.valorSaldoDevedor}</Text>
+                                </TableCell>
+                                <TableCell>
+                                    <Text fontWeight="bold">Extrato</Text>
+                                    <Button onClick={this.imprimirExtrato}>Gerar</Button>
+                                </TableCell>
+                            </TableBody>
+                        </Table>
+                        <Table>
+                            <TableBody>
+
+                                <TableCell>
+                                    <Text fontWeight="bold">Logradouro</Text>
+                                    <Text fontSize="h7">{enderecoPrincipal.endereco}</Text>
+                                </TableCell>
+                                <TableCell>
+                                    <Text fontWeight="bold">Número</Text>
+                                    <Text fontSize="h7">{enderecoPrincipal.numeroEndereco}</Text>
+                                </TableCell>
+                                <TableCell>
+                                    <Text fontWeight="bold">Complemento</Text>
+                                    <Text fontSize="h7">{enderecoPrincipal.complemento}</Text>
+                                </TableCell>
+                                <TableCell>
+                                    <Text fontWeight="bold">CEP</Text>
+                                    <Text fontSize="h7">{enderecoPrincipal.cep}</Text>
+                                </TableCell>
+                                <TableCell>
+                                    <Text fontWeight="bold">Bairro</Text>
+                                    <Text fontSize="h7">{enderecoPrincipal.bairro}</Text>
+                                </TableCell>
+                                <TableCell>
+                                    <Text fontWeight="bold">Cidade</Text>
+                                    <Text fontSize="h7">{enderecoPrincipal.nomeCidade}</Text>
+                                </TableCell>
+                                <TableCell>
+                                    <Text fontWeight="bold">UF</Text>
+                                    <Text fontSize="h7">{enderecoPrincipal.idUF}</Text>
+                                </TableCell>
+                            </TableBody>
+                        </Table>
+                        <Table>
+                            <TableBody>
+                                <TableCell>
+                                    <Text fontWeight="bold">Telefone</Text>
+                                    <Text fontSize="h7">{cotaTelefone.telefone}</Text>
+                                </TableCell>
+                            </TableBody>
+                        </Table>
+                        <Table>
+                            <TableBody>
+                                <TableCell>
+                                    <Text fontWeight="bold">E-mail</Text>
+                                    <Text fontSize="h7">{cotaEmail}</Text>
+                                </TableCell>
+                            </TableBody>
+                        </Table>
+                        <hr></hr>
+                    </Box>
+                    <Box variant="white">
+
+                        <Table>
+                            <TableBody>
+                                <TableRow>
+                                    <JSONPretty id="json-pretty" style={{ fontSize: "1.1em" }} data={cotasResposta1} mainStyle="padding:1em"></JSONPretty>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                        <Table>
+                            <TableBody>
+                                <TableRow>
+                                    <JSONPretty id="json-pretty" style={{ fontSize: "1.1em" }} data={cotasResposta2} mainStyle="padding:1em"></JSONPretty>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </Box>
                 </Box>
             );
         }
