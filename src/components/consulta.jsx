@@ -379,12 +379,7 @@ class Consulta extends Component {
                             </TableBody>
                         </Table>
                         <Table>
-                            <TableBody>
-                                <TableCell>
-                                    <Text fontWeight="bold">Telefone</Text>
-                                    <Text fontSize="h7">{cotaTelefone.telefone}</Text>
-                                </TableCell>
-                            </TableBody>
+                   
                         </Table>
                         <hr></hr>
                     </Box>
