@@ -88,11 +88,16 @@ const adminJS = new AdminJS({
     }
   ],
   pages: {
-  
+    Bradesco: {
+      component: AdminJS.bundle('./src/components/consulta'),
+    },
+    Porto: {
+      component: AdminJS.bundle('./src/components/portoSenha'),
+    }
   },
   branding: {
-    companyName: 'Bradesco Consórcios',
-    logo: 'https://banco.bradesco/html/classic/produtos-servicos/consorcios/assets/imgs/logo-nav.png',
+    companyName: 'Consórcios',
+    logo: 'https://s3.amazonaws.com/prd-beanstalk/site/upload/car_house_d6766637e7f135477efb066478c6251d.png',
     softwareBrothers: false,
   },
   dashboard: {
@@ -125,7 +130,7 @@ const adminJS = new AdminJS({
         navigation: '',
         Logout: 'Sair',
         Login: 'Entrar',
-        pages: 'Páginas',
+        pages: '',
         selectedRecords: 'Selecionados ({{selected}})',
         filters: 'Filtros',
         adminVersion: 'Admin: {{version}}',
